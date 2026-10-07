@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS predictions (
     model_version       text NOT NULL,
     features        jsonb NOT NULL,
     price       double precision NOT NULL,
-    latency_ms real
+    latency_ms real,
     status_code integer NOT NULL
 )
 """
