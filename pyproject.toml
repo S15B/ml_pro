@@ -26,7 +26,8 @@ dev = [
     "pytest",
     "httpx",
     "locust",
-    "ruff"
+    "ruff",
+    "httpx2>=2.13.1",
 ]
 
 [build-system]

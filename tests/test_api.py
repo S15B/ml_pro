@@ -9,7 +9,7 @@ def test_ready(client):
 
 
 def test_bad_tenure_is_422(client, good_row):
-    r = client.post("/v1/predict", json={**good_row, "tenure": -1})
+    r = client.post("/v1/predict", json={**good_row, "area": -1})
     assert r.status_code == 422
 
 

@@ -74,14 +74,14 @@ def predict(x: Features, bg: BackgroundTasks) -> Prediction:
     request_id = str(uuid.uuid4())
     payload = x.model_dump()
 
-    frame = pd.DataFrame([payload]).astype({"region": "object", "building_type": "object"})
+    frame = pd.DataFrame([payload]).astype({"region": "object", "building_type": "object", "mortgage_rate": "float", "usd_rate": "float",})
     frame = frame.loc[:, app.state.meta["features"]]
 
     price = float(app.state.pipeline.predict(frame)[0])
 
     latency_ms = round((time.perf_counter() - t0) * 1000, 2)
 
-    bg.add_task(db.save_prediction, request_id, payload, price, app.state.version, latency_ms)
+    bg.add_task(db.save_prediction, request_id, payload, price, app.state.version, latency_ms, 200)
 
     return Prediction(price=price, model_version = app.state.version, request_id=request_id, latency_ms=latency_ms)
 
