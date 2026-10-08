@@ -1,4 +1,22 @@
-docker run --rm -p 8000:8000 cost-service:1.0
+## Подготовка
+
+Модель artifact/cost_model.joblib хранится с Git LFS.
+Перед клонированием нужно установить Git LFS:
+git lfs install
+
+Если модель не скачалась автоматически:
+git lfs pull
+
+## Тесты:
+uv run pytest
+
+## Сборка docker
+docker compose up -d --build
+
+## Запуск nodes
+kind create cluster --name mlpro  
+kind load docker-image cost-service:1.0 --name mlpro
+
 
 Сервис
 
