@@ -78,7 +78,7 @@ jobs:
 
       - name: подтягиваем секреты
         env:
-          DB_PASSWORD: $ {{ secrets.DB_PASSWORD }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: |
           kubectl create secret generic cost-secrets \
           --from-literal=POSTGRES_PASSWORD="$DB_PASSWORD" \
