@@ -87,7 +87,7 @@ jobs:
       - name: база
         run: |
           kubectl apply -f k8s/postgres.yaml
-          kubectl rollout status deploy/postges --timeout=180s
+          kubectl rollout status deploy/postgres --timeout=180s
       
       - name: сервис
         run: |
@@ -106,7 +106,7 @@ jobs:
           
           sleep 2
 
-          kubectl exec deploy/postgres --psql -U postges -d cost \
+          kubectl exec deploy/postgres --psql -U postgres -d cost \
             -tc "SELECT count(*) FROM predictions" | grep -q 1
       
       - name: диагностика
