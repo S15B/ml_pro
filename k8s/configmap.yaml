@@ -4,5 +4,5 @@ metadata:
   name: cost-config
 data:
   LOG_LEVEL: "INFO"
-  MODEL_PATH: artifact/cost_model.joblib
+  MODEL_PATH: artifact/model.joblib
 
