@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS predictions (
     ts      timestamptz NOT NULL DEFAULT now(),
     model_version       text NOT NULL,
     features        jsonb NOT NULL,
-    price       double precision NOT NULL,
+    price       double precision,
     latency_ms real,
     status_code integer NOT NULL
 )

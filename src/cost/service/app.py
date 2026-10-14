@@ -5,6 +5,9 @@ from contextlib import asynccontextmanager
 import joblib
 import pandas as pd
 from fastapi import BackgroundTasks, FastAPI, HTTPException
+from fastapi import Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 from cost import db
@@ -55,9 +58,31 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="cost-predict", version="0.1.0", lifespan=lifespan)
 
+@app.middleware("http")
+async def request_timer(request: Request, call_next):
+    request.state.started = time.perf_counter()
+    return await call_next(request)
+
+
+@app.exception_handler(RequestValidationError)
+def validation_error(request: Request, exc: RequestValidationError):
+    request_id = str(uuid.uuid4())
+    model_version = request.app.state.version
+    payload = exc.body if exc.body is not None else {}
+
+    latency_ms = round((time.perf_counter() - request.state.started) * 1000, 2)
+
+    db.save_prediction(request_id, payload, None, model_version, latency_ms, 422)
+
+    return JSONResponse(status_code=422, content={"detail": "Некорректные данные запроса", "request_id": request_id, "model_version": model_version})
+
+
 @app.get("/health")
 def health():
-    return {"status": "ok", "model_version": getattr(app.state, "version", "unknown")}
+    return {"status": "ok", "model_version": getattr(app.state, "version", "unknown"),
+    "model_path": str(settings.model_path),
+    }
+
 
 @app.get("/ready")
 def ready():
@@ -65,7 +90,6 @@ def ready():
         raise HTTPException(status_code=503, detail="Model not loaded")
     
     return {"status": "ready"}
-
 
 
 @app.post("/v1/predict")
