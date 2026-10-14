@@ -4,8 +4,7 @@ from contextlib import asynccontextmanager
 
 import joblib
 import pandas as pd
-from fastapi import BackgroundTasks, FastAPI, HTTPException
-from fastapi import Request
+from fastapi import BackgroundTasks, FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
