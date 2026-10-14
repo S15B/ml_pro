@@ -27,4 +27,23 @@ def test_prediction_is_logged(client, good_row):
     assert row[2] == good_row["rooms"]
     assert row[3] == 200
 
+
+def test_bad_prediction_is_logged(client, good_row):
+    bad_row = {**good_row, "area": -1}
+    response = client.post("/v1/predict", json=bad_row)
+    assert response.status_code == 422
+    body = response.json()
+
+    with psycopg.connect(DATABASE_URL) as conn:
+        row = conn.execute(
+            "SELECT model_version, price, (features->>'rooms')::integer, status_code "
+            "FROM predictions WHERE request_id = %s",
+            (body["request_id"],),
+        ).fetchone()
+
+    assert row is not None
+    assert row[0] == body["model_version"]
+    assert row[1] is None
+    assert row[2] == bad_row["rooms"]
+    assert row[3] == 422
     
